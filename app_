@@ -1,0 +1,28 @@
+
+import streamlit as st
+import pickle
+import numpy as np
+
+model = pickle.load(open("model.pkl","rb"))
+scaler = pickle.load(open("scaler.pkl","rb"))
+
+st.title("Crypto Liquidity Prediction App")
+
+price = st.number_input("Price")
+volume = st.number_input("Volume")
+volatility = st.number_input("Volatility")
+
+if st.button("Predict Liquidity"):
+    data = np.array([[price, volume, volatility]])
+    data_scaled = scaler.transform(data)
+    result = model.predict(data_scaled)
+
+    if result[0] < 600:
+        level = "LOW Liquidity"
+    elif result[0] < 800:
+        level = "MEDIUM Liquidity"
+    else:
+        level = "HIGH Liquidity"
+
+    st.success(f"Predicted Liquidity: {result[0]:.2f} ({level})")
+
